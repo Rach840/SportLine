@@ -46,8 +46,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
-    "dotenv": "^16.4.7",
-    "drizzle-orm": "latest",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.44.5",
     "drizzle-seed": "^0.3.1",
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
@@ -55,6 +55,7 @@
     "mysql2": "^3.12.0",
     "next": "latest",
     "next-themes": "^0.4.4",
+    "pg": "^8.16.3",
     "prettier-plugin-tailwindcss": "0.0.0-insiders.d539a72",
     "react": "latest",
     "react-dom": "latest",
@@ -72,14 +73,14 @@
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@types/pg": "^8.15.5",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "drizzle-kit": "latest",
+    "drizzle-kit": "^0.31.4",
     "postcss": "^8",
     "prettier": "3.5.1",
     "tailwindcss": "^3.4.17",
-    "tsx": "^4.19.2",
-    "typescript": "^5"
+    "tsx": "^4.20.5"
   },
   "packageManager": "pnpm@10.2.1+sha512.398035c7bd696d0ba0b10a688ed558285329d27ea994804a52bad9167d8e3a72bcb993f9699585d3ca25779ac64949ef422757a6c31102c12ab932e5cbe5cc92"
 }
