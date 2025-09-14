@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/src/db";
-import { orderItems, orders, products, users } from "@/src/db/schema";
+import { order_item, orders, products, users } from "@/src/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -14,19 +14,18 @@ export async function GET(
     .select()
     .from(orders)
     .where(eq(orderId.id, orders.id));
-  console.log(userOrders);
   const user = await db
     .select()
     .from(users)
-    .where(eq(users.id, userOrders[0].userId));
+    .where(eq(users.id, userOrders[0].user));
   const ordersId = userOrders.map((order) => order.id);
 
   const orderItemsById = await db
     .select()
-    .from(orderItems)
-    .where(inArray(orderItems.orderId, ordersId));
+    .from(order_item)
+    .where(inArray(order_item.order, ordersId));
 
-  const orderItemsOnlyId = orderItemsById.map((items) => items.productId);
+  const orderItemsOnlyId = orderItemsById.map((items) => items.product);
   const cartItemsOnlyProducts = await db
     .select()
     .from(products)
@@ -34,10 +33,10 @@ export async function GET(
 
   const orderItemsFull = userOrders.map((item) => {
     const orderItemsWithProduct = orderItemsById
-      .filter((orderItem) => orderItem.orderId === item.id)
+      .filter((orderItem) => orderItem.order === item.id)
       .map((orderItem) => {
         const productByItem = cartItemsOnlyProducts.find(
-          (product) => product.id === orderItem.productId,
+          (product) => product.id === orderItem.product,
         );
         return {
           ...productByItem,
@@ -48,8 +47,8 @@ export async function GET(
 
     return {
       id: item.id,
-      total: item.total,
-      createdAt: item.createdAt,
+      total: item.price,
+      createdAt: item.createAt,
       status: item.status,
       orderItems: orderItemsWithProduct,
       orderTotal: orderItemsWithProduct.reduce(

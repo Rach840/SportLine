@@ -6,8 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const ordersAll = await db.select().from(orders);
-  console.log(ordersAll);
-  const usersId = ordersAll.map((order) => order.userId);
+  const usersId = ordersAll.map((order) => order.user);
 
   const userItemsById = await db
     .select()
@@ -24,12 +23,12 @@ export async function GET() {
     return date.toLocaleString("ru", options);
   }
   const orderFull = ordersAll.map((item) => {
-    const user = userItemsById.find((userItem) => userItem.id === item.userId);
+    const user = userItemsById.find((userItem) => userItem.id === item.user);
     return {
       id: item.id,
-      total: item.total,
+      total: item.price,
       user: user,
-      createdAt: getDate(item.createdAt),
+      createdAt: getDate(item.createAt),
       status: item.status,
     };
   });

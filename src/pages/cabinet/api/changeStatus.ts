@@ -7,7 +7,7 @@ import { sendSalesMessageTelegram } from "@/src/shared/api/telegram/telegram-sal
 export async function approveDeliver(orderId: string): Promise<void> {
   await db
     .update(orders)
-    .set({ status: "DELIVERED" })
+    .set({ status: "delivered" })
     .where(eq(orders.id, orderId));
   const changedOrder = await db
     .select()
@@ -16,15 +16,15 @@ export async function approveDeliver(orderId: string): Promise<void> {
   const user = await db
     .select()
     .from(users)
-    .where(eq(users.id, changedOrder[0].userId));
+    .where(eq(users.id, changedOrder[0].user));
 
-  const message = `Заказ ${changedOrder[0].id} %0AПользователя ${user[0].name} ${user[0]?.lastName} доставлен %0AПочта: ${user[0].email} %0AНомер телефона: ${user[0]?.phone ? user[0].phone : "Не найдено"}`;
+  const message = `Заказ ${changedOrder[0].id} %0AПользователя ${user[0].firstName} ${user[0]?.lastName} доставлен %0AПочта: ${user[0].email} %0AНомер телефона: ${user[0]?.phone ? user[0].phone : "Не найдено"}`;
   await sendSalesMessageTelegram(message);
 }
 export async function deniedDeliver(orderId: string): Promise<void> {
   await db
     .update(orders)
-    .set({ status: "FAILED" })
+    .set({ status: "cancelled" })
     .where(eq(orders.id, orderId));
   const changedOrder = await db
     .select()
@@ -33,8 +33,8 @@ export async function deniedDeliver(orderId: string): Promise<void> {
   const user = await db
     .select()
     .from(users)
-    .where(eq(users.id, changedOrder[0].userId));
+    .where(eq(users.id, changedOrder[0].user));
 
-  const message = `!ЗАКАЗ НЕ ДОСТАВЛЕН! %0AЗаказ ${changedOrder[0].id} %0AПользователя ${user[0].name} ${user[0]?.lastName} не доставлен %0AПочта: ${user[0].email} %0AНомер телефона: ${user[0]?.phone ? user[0].phone : "Не найдено"} %0AСвяжитесь с пользователем для выяснение подробностей`;
+  const message = `!ЗАКАЗ НЕ ДОСТАВЛЕН! %0AЗаказ ${changedOrder[0].id} %0AПользователя ${user[0].firstName} ${user[0]?.lastName} не доставлен %0AПочта: ${user[0].email} %0AНомер телефона: ${user[0]?.phone ? user[0].phone : "Не найдено"} %0AСвяжитесь с пользователем для выяснение подробностей`;
   await sendSalesMessageTelegram(message);
 }

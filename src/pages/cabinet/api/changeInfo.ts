@@ -19,7 +19,7 @@ export async function changeInfo(prevState, data) {
     await db
       .update(users)
       .set({
-        name: dataName,
+        firstName: dataName,
         lastName: dataLastName,
         email: dataEmail,
         phone: dataPhone,
