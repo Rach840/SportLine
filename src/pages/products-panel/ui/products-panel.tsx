@@ -77,14 +77,14 @@ export default function ProductsAdminPage() {
   };
 const productRussia = products?.map((item) => {
   return {
-    Артикул: item.id ,
-    Название: item.name ,
-    Создан:item.createdAt ,
-    Описание: item.description ,
-    Цена: item.price ,
-    Категория: item.category ,
-    Наличие: item.stock ,
-    Производитель: item.manufacturer ,
+    "Артикул": item.id ,
+    "Название": item.name ,
+    "Создан":item.createdAt ,
+    "Описание": item.description ,
+    "Цена": item.price ,
+    "Категория": item.category ,
+    "Наличие": item.stock ,
+    "Производитель": item.manufacturer ,
   }
 })
   return (

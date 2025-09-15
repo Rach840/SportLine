@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/db";
-import { carts, users } from "@/src/db/schema";
+import {users } from "@/src/db/schema";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: Request) {
@@ -31,17 +31,14 @@ export async function POST(request: Request) {
       .insert(users)
       .values({
         id: id,
-        name,
+        firstName: name,
         lastName,
         email,
         password: hashedPassword,
-        role: "CLIENT", // Default role for new registrations
+        role: "user", // Default role for new registrations
       })
-      .$returningId();
-    await db.insert(carts).values({
-      id: uuidv4(),
-      userId: id,
-    });
+      .returning();
+//TODO Create cart for new user
     const newUser = await db.select().from(users).where(eq(users.email, email));
 
     const { password: _, ...userWithoutPassword } = newUser[0];

@@ -5,7 +5,10 @@ import { users } from "@/src/db/schema";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 
-export async function changeInfo(prevState, data) {
+export async function changeInfo(
+  prevState: any,
+  data: { get: (arg0: string) => any },
+) {
   const dataName = data.get("firstName");
   const dataLastName = data.get("lastName");
   const dataEmail = data.get("email");
@@ -13,13 +16,13 @@ export async function changeInfo(prevState, data) {
   const cookieStore = await cookies();
   const userCookie = cookieStore.get("user");
 
-  const user = JSON.parse(userCookie.value);
+  const user = JSON.parse(userCookie ?  userCookie.value : '');
 
   try {
     await db
       .update(users)
       .set({
-        name: dataName,
+        firstName: dataName,
         lastName: dataLastName,
         email: dataEmail,
         phone: dataPhone,

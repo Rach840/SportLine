@@ -44,10 +44,10 @@ export default function BuyCart() {
     fetchOrders();
   }, [user]);
 
-  if (!isLoading && !(user.role == "SALES_MANAGER")) router.replace("/");
+  if (!isLoading && !(user?.role == "admin")) router.replace("/");
 
   const filteredOrders = orders?.filter(
-    (order) =>
+    (order: any) =>
       (order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.user.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (statusFilter === "all" ||
@@ -106,10 +106,10 @@ console.log(filteredOrders);
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrders?.map((order) => (
+                {filteredOrders?.map((order:any) => (
                   <TableRow key={order.id}>
                     <TableCell>{order.id}</TableCell>
-                    <TableCell>{order.createdAt}</TableCell>
+                    <TableCell>{order.createAt.getDate()}</TableCell>
                     <TableCell>
                       {order.user?.name ?order.user.name : 'Удаленный аккаунт' } {order.user?.lastName ? order.user.lastName : 'Удаленный аккаунт'}
                     </TableCell>

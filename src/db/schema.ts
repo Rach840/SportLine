@@ -1,13 +1,32 @@
 // schema.ts
 import {
-  pgTable, uuid, text, integer, boolean, timestamp, bytea,
-  uniqueIndex, pgEnum
+  pgTable,
+  uuid,
+  text,
+  integer,
+  boolean,
+  timestamp,
+  uniqueIndex,
+  pgEnum,
+  customType,
 } from "drizzle-orm/pg-core";
 import { relations, InferSelectModel, InferInsertModel } from "drizzle-orm";
 
+
+const bytea = (name: string) =>
+  customType<{ data: Buffer; driverData: Buffer }>({
+    dataType: () => "bytea",
+    toDriver: (v) => v,
+    fromDriver: (v) => v as Buffer,
+  })(name);
+
+export const files = pgTable("files", {
+  id: text("id").primaryKey(),
+  data: bytea("data").notNull(),
+});
 /* ========================= Enums ========================= */
 // Подправь значения под свой домен при необходимости.
-export const userRoleEnum     = pgEnum("user_role", ["user", "admin", "manager"]);
+export const userRoleEnum     = pgEnum("user_role", ["CLIENT", "SALES_MANAGER", "CEO", 'STORAGE_MANAGER']);
 export const orderStatusEnum  = pgEnum("order_status", ["pending", "paid", "shipped", "delivered", "cancelled"]);
 export const payMethodEnum    = pgEnum("pay_method", ["card", "cash", "transfer"]);
 export const productGenderEnum= pgEnum("product_gender", ["male", "female", "unisex"]);
@@ -18,11 +37,11 @@ export const productSizeEnum  = pgEnum("product_size", ["xs", "s", "m", "l", "xl
 export const users = pgTable("users", {
   id:        uuid("id").defaultRandom().primaryKey(),
   firstName: text("firstName").notNull(),
-  address:   text("address"),                 // как на диаграмме, хотя адреса вынесены в отдельную таблицу
+  address:   text("address"),
   email:     text("email").notNull().unique(),
   phone:     text("phone"),
   password:  text("password").notNull(),
-  role:      userRoleEnum("role").notNull().default("user"),
+  role:      userRoleEnum("role").notNull().default("CLIENT"),
   lastName:  text("lastName"),
   createAt:  timestamp("createAt").notNull().defaultNow(),
 });
@@ -35,7 +54,6 @@ export const images = pgTable("images", {
 
 export const categories = pgTable("categories", {
   id:          uuid("id").defaultRandom().primaryKey(),
-  // На диаграмме тип у name проставлен как bigint — считаю это опечаткой; делаю text.
   name:        text("name").notNull().unique(),
   description: text("description"),
 });
@@ -74,6 +92,7 @@ export const orders = pgTable("orders", {
   status:    orderStatusEnum("status").notNull().default("pending"),
   price:     integer("price").notNull(),
   pay_method:payMethodEnum("pay_method").notNull(),
+  total:    integer("total").notNull(),
   delivery:  boolean("delivery").notNull().default(true),
   createAt:  timestamp("createAt").notNull().defaultNow(),
 });
@@ -88,12 +107,10 @@ export const order_item = pgTable("order_item", {
 
 export const cart_item = pgTable("cart_item", {
   id:       uuid("id").defaultRandom().primaryKey(),
-  // На диаграмме тип text — оставляю как session/user-cart-id без внешнего ключа.
   cart:     text("cart").notNull(),
   product:  uuid("product").notNull().references(() => products.id, { onDelete: "cascade" }),
   quantity: integer("quantity").notNull().default(1),
 }, (t) => ({
-  // один и тот же товар в одной "корзине" — единственный
   uxCartProduct: uniqueIndex("ux_cart_product").on(t.cart, t.product),
 }));
 

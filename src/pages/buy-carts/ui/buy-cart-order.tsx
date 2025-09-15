@@ -28,7 +28,7 @@ export default function OrderDetailsPage() {
   useEffect(() => {
     (async () => {
       const response = await fetch(
-        `/api/buy-carts/buy-carts-order/${params.id}/order`,
+        `/api/buy-carts/buy-carts-order/${params?.id}/order`,
       );
       const data = await response.json();
 

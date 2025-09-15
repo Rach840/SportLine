@@ -10,7 +10,7 @@ export default function Header() {
     <header className="bg-white shadow">
       <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold">
-          ElectroTools
+          SportLine
         </Link>
         <div className="space-x-4">
           <Link href="/products" className="text-black text-lg hover:text-gray-600">

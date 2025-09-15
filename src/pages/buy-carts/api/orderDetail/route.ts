@@ -1,6 +1,6 @@
 "use server";
 import { db } from "@/src/db";
-import { orderItems, orders, products, users } from "@/src/db/schema";
+import { order_item, orders, products, users } from "@/src/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -8,7 +8,7 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
-  const orderId = await params;
+  const orderId = params;
   console.log(orderId);
   const userOrders = await db
     .select()
@@ -18,13 +18,13 @@ export async function GET(
   const user = await db
     .select()
     .from(users)
-    .where(eq(users.id, userOrders[0].userId));
+    .where(eq(users.id, userOrders[0].id));
   const ordersId = userOrders.map((order) => order.id);
 
   const orderItemsById = await db
     .select()
-    .from(orderItems)
-    .where(inArray(orderItems.orderId, ordersId));
+    .from(order_item)
+    .where(inArray(order_item.id, ordersId));
 
   const orderItemsOnlyId = orderItemsById.map((items) => items.productId);
   const cartItemsOnlyProducts = await db
@@ -34,22 +34,22 @@ export async function GET(
 
   const orderItemsFull = userOrders.map((item) => {
     const orderItemsWithProduct = orderItemsById
-      .filter((orderItem) => orderItem.orderId === item.id)
+      .filter((orderItem) => order_item.id === item.id)
       .map((orderItem) => {
         const productByItem = cartItemsOnlyProducts.find(
-          (product) => product.id === orderItem.productId,
+          (product) => product.id === order_item.product,
         );
         return {
           ...productByItem,
           quantity: orderItem.quantity,
-          total: productByItem.price * orderItem.quantity,
+          total: (productByItem?.price || 1) * orderItem.quantity,
         };
       });
 
     return {
       id: item.id,
       total: item.total,
-      createdAt: item.createdAt,
+      createdAt: item.createAt,
       status: item.status,
       orderItems: orderItemsWithProduct,
       orderTotal: orderItemsWithProduct.reduce(

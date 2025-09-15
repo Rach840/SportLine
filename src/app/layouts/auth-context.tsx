@@ -17,7 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [user, setUser] = useState<User | boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     // Check for saved user in localStorage
     (async () => {
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (savedUser) {
         setUser(savedUser);
       } else {
-        setUser(false);
+        setUser(null);
       }
     })();
   }, []);
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    setUser(false);
+    setUser(null);
     await deleteCookies();
 
     router.replace("/");

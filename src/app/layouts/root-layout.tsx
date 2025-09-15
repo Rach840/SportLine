@@ -7,8 +7,8 @@ import type React from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "ElectroTools",
-  description: "Your one-stop shop for electronic tools",
+  title: "SportLine",
+  description: "Your one-stop shop for sport tools",
 };
 
 export function RootLayout({ children }: { children: React.ReactNode }) {
